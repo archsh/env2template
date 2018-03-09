@@ -17,13 +17,21 @@ func err_printf(f string, s...interface{}) {
     os.Stderr.Write([]byte(fmt.Sprintf(f, s...)))
 }
 
+const VERSION = "develop"
+
 func main() {
+    var show_version bool
+    flag.BoolVar(&show_version, "v", false, "Display version")
     var template_filename, output_filename string
     //Template filename
     flag.StringVar(&template_filename, "t", "", "Template filename.")
     //Output filename
     flag.StringVar(&output_filename, "o", "", "Output filename. Empty means output to stdout.")
     flag.Parse()
+    if show_version {
+        err_println(VERSION)
+        os.Exit(0)
+    }
     if template_filename == "" {
         err_println("Template filename required!")
         os.Exit(1)

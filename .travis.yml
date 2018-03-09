@@ -1,0 +1,35 @@
+language: go
+sudo: false
+matrix:
+  include:
+    - go: 1.x
+      env: LATEST=true
+    - go: 1.5
+    - go: 1.6
+    - go: 1.7
+    - go: tip
+  allow_failures:
+    - go: tip
+
+before_install:
+
+install:
+  - # skip
+
+script:
+  # Only build binaries from the latest Go release.
+  - if [ "${LATEST}" = "true" ]; then gox -os="linux darwin windows" -arch="amd64" -output="env2template.." -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...; fi
+
+deploy:
+  provider: releases
+  skip_cleanup: true
+  api_key:
+    secure:
+  file:
+  - env2template.windows.amd64.exe
+  - env2template.darwin.amd64
+  - env2template.linux.amd64
+  on:
+    repo: archsh/env2template
+    tags: true
+    condition: $LATEST = true
